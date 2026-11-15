@@ -14,188 +14,367 @@ window.AIO_COURSES = [
         id: "py_basics",
         title: "Bài 1: Variable, Scalar, List, Tuple, Dict, Set & Argument",
         badge: "Python Nền tảng · Bài 01",
-        description: "Bản chất vùng nhớ, các kiểu dữ liệu cốt lõi, so sánh chi tiết và cách truyền đối số trong Python.",
-        tags: ["python", "variable", "list", "tuple", "dict", "set", "argument", "scalar"],
+        description: "Giải thích chi tiết 100% theo bản chất, ẩn dụ trực quan, cơ chế vùng nhớ, bảng băm O(1) và đối số nâng cao.",
+        tags: ["python", "variable", "list", "tuple", "dict", "set", "argument", "parameter", "scalar"],
         content: {
           theory: `
             <div class="section-block">
-              <h4>1. Variable (Biến) – Nhãn dán tham chiếu vùng nhớ</h4>
-              <p>Trong Python, biến không phải là một chiếc hộp chứa trực tiếp giá trị như trong C/C++, mà thực chất là một <strong>nhãn tên (reference tag)</strong> trỏ đến vùng nhớ của đối tượng trên bộ nhớ Heap.</p>
+              <h4>1. Variable (Biến) – "Tấm thẻ tên / Nhãn dán"</h4>
+              <p>Trong Python, biến <strong>không phải là một chiếc hộp</strong> chứa trực tiếp giá trị như trong C/C++, mà thực chất là một <strong>tấm tem dán tên (name tag / reference)</strong> trỏ đến vùng nhớ của đối tượng (Object) trong bộ nhớ Heap.</p>
+              <p>Python sử dụng cơ chế định kiểu động (<em>dynamic typing</em>), biến tự động nhận kiểu của đối tượng mà nó tham chiếu tới.</p>
               <div class="callout-box">
-                <strong>💡 Lưu ý quan trọng về tính tham chiếu (Reference):</strong> Khi thực hiện <code>b = a</code> với các kiểu dữ liệu có thể sửa đổi (Mutable như <code>list</code>), việc thay đổi <code>b</code> sẽ ảnh hưởng trực tiếp đến <code>a</code> vì cả hai đang cùng trỏ chung một vùng nhớ!
+                <strong>⚠️ Cạm bẫy tham chiếu vùng nhớ:</strong>
+                <p>Khi bạn thực hiện <code>b = a</code> với một đối tượng có thể thay đổi (Mutable như <code>list</code>), cả <code>a</code> và <code>b</code> sẽ cùng trỏ vào <strong>chính xác một địa chỉ ô nhớ</strong>. Sửa một bên là bên kia thay đổi theo!</p>
               </div>
             </div>
 
             <div class="section-block">
               <h4>2. Scalar (Đại lượng vô hướng / Giá trị đơn)</h4>
-              <p>Scalar là một giá trị đơn lẻ, mang số chiều bằng $0$ (phân biệt với Vector 1D, Matrix 2D và Tensor đa chiều). Các kiểu dữ liệu Scalar cơ bản gồm: <code>int</code>, <code>float</code>, <code>bool</code>, <code>complex</code>.</p>
+              <p>Scalar là một con số hoặc giá trị đơn lẻ, mang số chiều bằng $0$ (phân biệt với Vector $1$ chiều, Matrix ma trận $2$ chiều và Tensor đa chiều trong AI/ML).</p>
+              <ul>
+                <li><strong>Số nguyên (<code>int</code>):</strong> Giá tiền, batch size (vd: <code>batch_size = 32</code>).</li>
+                <li><strong>Số thực (<code>float</code>):</strong> Tốc độ học, điểm số (vd: <code>lr = 0.001</code>).</li>
+                <li><strong>Logic (<code>bool</code>):</strong> Trạng thái nhị phân <code>True</code> / <code>False</code>.</li>
+                <li><strong>Số phức (<code>complex</code>):</strong> <code>z = 2 + 3j</code>.</li>
+              </ul>
             </div>
 
             <div class="section-block">
-              <h4>3. Bảng so sánh 4 cấu trúc dữ liệu cốt lõi</h4>
+              <h4>3. List (Danh sách) – "Chiếc giỏ đi chợ (Thêm/bớt/sửa thoải mái)"</h4>
+              <p>Cấu trúc dữ liệu tuần tự linh hoạt nhất trong Python:</p>
+              <ul>
+                <li><strong>Có thứ tự (Ordered):</strong> Món nào vào trước nằm trước, đánh chỉ số (index) bắt đầu từ $0$, hỗ trợ index âm từ cuối về ($-1$).</li>
+                <li><strong>Có thể thay đổi (Mutable):</strong> Thêm (<code>append</code>, <code>insert</code>), xóa (<code>pop</code>, <code>remove</code>), sửa phần tử tùy ý.</li>
+                <li><strong>Đa dạng kiểu (Heterogeneous):</strong> Một list có thể chứa cả số, chuỗi, boolean hay một list con khác.</li>
+                <li><strong>Cú pháp:</strong> Cặp dấu ngoặc vuông <code>[...]</code>.</li>
+              </ul>
+              <div class="callout-box">
+                <strong>So sánh với NumPy Array trong AI:</strong> <code>list</code> của Python lưu con trỏ rời rạc trong RAM. Trong Deep Learning, ta bắt buộc chuyển sang dùng <code>numpy.ndarray</code> hoặc <code>torch.Tensor</code> vì dữ liệu được lưu trên mảng bộ nhớ liên tục (Contiguous Memory), hỗ trợ tính toán ma trận song song siêu tốc.
+              </div>
+            </div>
+
+            <div class="section-block">
+              <h4>4. Tuple (Bộ cố định) – "Thông tin in ép dẻo trên thẻ CCCD (Cấm sửa)"</h4>
+              <p>Tương tự như <code>list</code> nhưng có một đặc tính tối quan trọng: <strong>Bất biến (Immutable)</strong>.</p>
+              <ul>
+                <li>Một khi đã tạo, <strong>không thể</strong> thêm, xóa hoặc thay đổi bất kỳ phần tử nào bên trong.</li>
+                <li><strong>Cú pháp:</strong> Dùng cặp ngoặc tròn <code>(...)</code>. (Lưu ý: Tuple có $1$ phần tử phải có dấu phẩy ở cuối: <code>x = (5,)</code>).</li>
+                <li><strong>Ứng dụng:</strong> Lưu kích thước ảnh cố định <code>image_shape = (224, 224, 3)</code>, tọa độ GPS, trả về nhiều giá trị từ hàm, hoặc dùng làm Key trong Dictionary.</li>
+              </ul>
+            </div>
+
+            <div class="section-block">
+              <h4>5. Dict / Dictionary (Từ điển) – "Danh bạ điện thoại / Menu quán ăn"</h4>
+              <p>Thay vì tìm kiếm bằng số thứ tự ($0, 1, 2$), <code>dict</code> lưu dữ liệu theo cặp <strong>Khóa - Giá trị (<code>key: value</code>)</strong>.</p>
+              <ul>
+                <li><strong>Key (Khóa):</strong> Phải là đối tượng <strong>bất biến và băm được (Hashable)</strong> như số, chuỗi, hoặc tuple. <em>Tuyệt đối không được dùng List hay Dict làm Key</em>. Key là duy nhất (không trùng lặp).</li>
+                <li><strong>Value (Giá trị):</strong> Bất kỳ kiểu dữ liệu nào.</li>
+                <li><strong>Tốc độ tra cứu:</strong> Cực kỳ nhanh với độ phức tạp trung bình là $O(1)$ nhờ cấu trúc Bảng băm (Hash Table).</li>
+                <li><strong>Cú pháp:</strong> Dùng ngoặc nhọn <code>{"key": value}</code>.</li>
+              </ul>
+            </div>
+
+            <div class="section-block">
+              <h4>6. Set (Tập hợp) – "Túi gom hàng tự động lọc sạch trùng lặp"</h4>
+              <p>Mô phỏng trực tiếp khái niệm Tập hợp trong Toán học:</p>
+              <ul>
+                <li><strong>Duy nhất (Unique):</strong> Bỏ $10$ phần tử trùng nhau vào set thì nó cũng tự động gộp thành $1$.</li>
+                <li><strong>Không có thứ tự (Unordered):</strong> Không hỗ trợ truy xuất theo chỉ số (không thể gọi <code>s[0]</code>).</li>
+                <li><strong>Cú pháp:</strong> Dùng ngoặc nhọn <code>{1, 2, 3}</code>. Muốn tạo set rỗng phải dùng <code>set()</code> (vì <code>{}</code> sẽ tạo ra dict).</li>
+              </ul>
+            </div>
+
+            <div class="section-block">
+              <h4>7. Argument vs Parameter – "Mẫu đơn in sẵn" và "Chữ bạn điền"</h4>
+              <ul>
+                <li><strong>Parameter (Tham số):</strong> Là tên biến được khai báo ở phần định nghĩa hàm (như các <strong>ô trống trên mẫu đơn</strong> in sẵn: <code>[Tên: ...]</code>, <code>[Năm sinh: ...]</code>).</li>
+                <li><strong>Argument (Đối số):</strong> Là giá trị cụ thể bạn cầm bút <strong>điền vào ô trống</strong> khi gọi hàm thực tế.</li>
+              </ul>
               <table style="width:100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
                 <thead>
-                  <tr style="background: var(--primary-light); text-align: left;">
-                    <th style="padding: 10px; border: 1px solid var(--border-color);">Kiểu</th>
-                    <th style="padding: 10px; border: 1px solid var(--border-color);">Cú pháp</th>
-                    <th style="padding: 10px; border: 1px solid var(--border-color);">Có thứ tự (Ordered)</th>
-                    <th style="padding: 10px; border: 1px solid var(--border-color);">Có thể sửa (Mutable)</th>
-                    <th style="padding: 10px; border: 1px solid var(--border-color);">Trùng lặp</th>
-                    <th style="padding: 10px; border: 1px solid var(--border-color);">Mục đích chính</th>
+                  <tr style="background: var(--primary-light);">
+                    <th style="padding: 8px; border: 1px solid var(--border-color);">Phân loại Argument</th>
+                    <th style="padding: 8px; border: 1px solid var(--border-color);">Ý nghĩa</th>
+                    <th style="padding: 8px; border: 1px solid var(--border-color);">Ví dụ cú pháp</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>List</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><code>[...]</code></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Có (index $0$)</td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Có</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Cho phép</td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Giỏ hàng linh hoạt, thêm/sửa/xóa</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>Positional</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">Gán theo đúng thứ tự từ trái sang phải</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>calc(10, 20)</code></td>
                   </tr>
                   <tr>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Tuple</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><code>(...)</code></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Có (index $0$)</td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>KHÔNG</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Cho phép</td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Hằng số, tọa độ cố định, key của dict</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>Keyword</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">Chỉ định rõ tên tham số (không cần theo thứ tự)</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>calc(y=20, x=10)</code></td>
                   </tr>
                   <tr>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Dict</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><code>{k: v}</code></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Có (Python 3.7+)</td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Có</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Key duy nhất</td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Bảng tra cứu nhanh $O(1)$, cấu hình</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>Default</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">Giá trị mặc định sẵn nếu người gọi không truyền</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>def calc(x, b=0):</code></td>
                   </tr>
                   <tr>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Set</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><code>{...}</code></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Không</td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Có</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Lọc sạch trùng</strong></td>
-                    <td style="padding: 10px; border: 1px solid var(--border-color);">Loại bỏ phần tử trùng lặp, phép toán tập hợp</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>*args</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">Thu thập số lượng vô hạn đối số vị trí thành <strong>Tuple</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>def f(*args):</code></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>**kwargs</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">Thu thập số lượng vô hạn đối số từ khóa thành <strong>Dict</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>def f(**kwargs):</code></td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <div class="section-block">
-              <h4>4. Parameter vs Argument</h4>
-              <p><strong>Parameter (Tham số):</strong> Tên biến được định nghĩa ở phần khai báo hàm (như các ô trống trên mẫu đơn).</p>
-              <p><strong>Argument (Đối số):</strong> Giá trị thực tế được truyền vào khi gọi hàm (như nội dung thật bạn điền vào ô trống).</p>
+              <h4>8. Bảng so sánh 4 cấu trúc dữ liệu cốt lõi</h4>
+              <table style="width:100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
+                <thead>
+                  <tr style="background: var(--primary-light); text-align: left;">
+                    <th style="padding: 10px; border: 1px solid var(--border-color);">Tiêu chí</th>
+                    <th style="padding: 10px; border: 1px solid var(--border-color);">List (<code>[...]</code>)</th>
+                    <th style="padding: 10px; border: 1px solid var(--border-color);">Tuple (<code>(...)</code>)</th>
+                    <th style="padding: 10px; border: 1px solid var(--border-color);">Dict (<code>{k: v}</code>)</th>
+                    <th style="padding: 10px; border: 1px solid var(--border-color);">Set (<code>{...}</code>)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Thứ tự (Ordered)</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Có (chỉ số $0$)</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Có (chỉ số $0$)</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Có (từ Python 3.7+)</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Không</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Có thể sửa (Mutable)</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Có</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>KHÔNG</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Có</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Có</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Trùng lặp</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Cho phép</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Cho phép</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Key duy nhất</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Lọc sạch trùng</strong></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Cách truy xuất</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Theo chỉ số <code>a[i]</code></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Theo chỉ số <code>t[i]</code></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Theo Khóa <code>d[key]</code></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Duyệt vòng lặp <code>for</code></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);"><strong>Mục đích chính</strong></td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Danh sách thay đổi linh hoạt</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Bảo vệ dữ liệu, hằng số</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Tra cứu $O(1)$, cấu hình</td>
+                    <td style="padding: 10px; border: 1px solid var(--border-color);">Lọc phần tử duy nhất, giao/hợp</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           `,
           math: `
             <div class="section-block">
-              <h4>Mô hình Toán học & Độ phức tạp thuật toán (Time Complexity)</h4>
-              <p>Cấu trúc <strong>Dictionary</strong> và <strong>Set</strong> dựa trên cấu trúc <em>Bảng băm (Hash Table)</em>, cho tốc độ tra cứu phần tử trung bình là:</p>
+              <h4>1. Phép toán Tập hợp (Set Operations)</h4>
+              <p>Cấu trúc <code>set</code> hỗ trợ trực tiếp các phép toán tập hợp đại số kinh điển:</p>
+              <table style="width:100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;">
+                <thead>
+                  <tr style="background: var(--primary-light);">
+                    <th style="padding: 8px; border: 1px solid var(--border-color);">Phép toán</th>
+                    <th style="padding: 8px; border: 1px solid var(--border-color);">Ký hiệu Toán học</th>
+                    <th style="padding: 8px; border: 1px solid var(--border-color);">Toán tử Python</th>
+                    <th style="padding: 8px; border: 1px solid var(--border-color);">Phương thức hàm</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>Hợp (Union)</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">$A \\cup B$</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A | B</code></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A.union(B)</code></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>Giao (Intersection)</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">$A \\cap B$</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A & B</code></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A.intersection(B)</code></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>Hiệu (Difference)</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">$A \\setminus B$</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A - B</code></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A.difference(B)</code></td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><strong>Hiệu đối xứng</strong></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);">$A \\Delta B$</td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A ^ B</code></td>
+                    <td style="padding: 8px; border: 1px solid var(--border-color);"><code>A.symmetric_difference(B)</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="section-block">
+              <h4>2. Độ phức tạp thuật toán (Time Complexity):</h4>
+              <p>Nhờ cấu trúc Bảng băm (Hash Table), thời gian tìm kiếm một phần tử trong <code>dict</code> hoặc <code>set</code> là độc lập với số lượng phần tử $N$:</p>
               <div style="text-align: center; margin: 15px 0; font-size: 18px;">
-                $$\\text{Complexity}(\\text{Tra cứu Dict / Set}) = O(1)$$
+                $$\\mathcal{T}_{\\text{Dict / Set}} = O(1)$$
               </div>
-              <p>Trong khi đó, việc tìm kiếm phần tử trong một <strong>List</strong> thông thường phải duyệt tuần tự từ đầu đến cuối:</p>
+              <p>Trong khi đó, duyệt tìm một phần tử trong <code>list</code> đòi hỏi duyệt tuyến tính từ đầu tới cuối:</p>
               <div style="text-align: center; margin: 15px 0; font-size: 18px;">
-                $$\\text{Complexity}(\\text{Tìm kiếm List}) = O(n)$$
+                $$\\mathcal{T}_{\\text{List search}} = O(N)$$
               </div>
             </div>
 
             <div class="section-block">
-              <h4>Độ phức tạp không gian (Space Dimension):</h4>
-              <p>Sự phân cấp hình học dữ liệu từ Python sang AI/ML:</p>
+              <h4>3. Phân cấp Thứ nguyên Không gian (Dimensions in AI):</h4>
               <ul>
-                <li><strong>Scalar:</strong> $x \\in \\mathbb{R}$ (Không gian $0$ chiều)</li>
-                <li><strong>Vector (1D List/Array):</strong> $\\mathbf{x} = [x_1, x_2, \\dots, x_d]^T \\in \\mathbb{R}^d$ ($1$ chiều)</li>
-                <li><strong>Matrix (2D List/Array):</strong> $\\mathbf{X} \\in \\mathbb{R}^{m \\times n}$ ($2$ chiều)</li>
-                <li><strong>Tensor (3D+):</strong> $\\mathcal{T} \\in \\mathbb{R}^{B \\times C \\times H \\times W}$ (Tensor ảnh 4 chiều trong Deep Learning)</li>
+                <li><strong>Scalar:</strong> $s \\in \\mathbb{R}$ (Không gian $0$ chiều, ví dụ: Loss = $0.025$)</li>
+                <li><strong>Vector (1D):</strong> $\\mathbf{x} = [x_1, x_2, \\dots, x_d]^T \\in \\mathbb{R}^d$ ($1$ chiều)</li>
+                <li><strong>Matrix (2D):</strong> $\\mathbf{X} \\in \\mathbb{R}^{m \\times n}$ ($2$ chiều)</li>
+                <li><strong>Tensor (4D trong Computer Vision):</strong> $\\mathcal{X} \\in \\mathbb{R}^{B \\times C \\times H \\times W}$ (Batch size, Channels, Height, Width)</li>
               </ul>
             </div>
           `,
           code: `
-# 1. Minh họa về tính tham chiếu (Reference) của Biến
+# ==========================================
+# 1. BIẾN VÀ CƠ CHẾ THAM CHIẾU (MUTABLE VS IMMUTABLE)
+# ==========================================
 a = [1, 2, 3]
-b = a              # b và a trỏ cùng vùng nhớ
+b = a                 # b và a cùng trỏ chung một địa chỉ ô nhớ
 b.append(4)
-print(f"a: {a}")   # Kết quả: [1, 2, 3, 4] -> a bị thay đổi!
+print("a:", a)        # [1, 2, 3, 4] -> a bị thay đổi!
 
-# Để copy độc lập:
+# Cách copy tách biệt ô nhớ độc lập:
 c = a.copy()
 c.append(99)
-print(f"a vẫn giữ nguyên: {a}")
+print("a vẫn an toàn:", a) # [1, 2, 3, 4]
 
-# 2. Ứng dụng Tuple làm tọa độ và kích thước ảnh
-image_shape = (224, 224, 3) # (H, W, C) - Cố định không đổi
+# ==========================================
+# 2. TUPLE (BẤT BIẾN - DÙNG CHO CẤU HÌNH & TỌA ĐỘ)
+# ==========================================
+img_shape = (224, 224, 3) # (H, W, Channels)
+# img_shape[0] = 512      # Lỗi TypeError!
 
-# 3. Tra cứu siêu tốc với Dict
-hyperparams = {
+# ==========================================
+# 3. DICTIONARY (CẶP KHÓA - GIÁ TRỊ TRA CỨU O(1))
+# ==========================================
+model_config = {
+    "model_name": "ResNet50",
     "lr": 0.001,
+    "epochs": 100,
     "batch_size": 32,
-    "optimizer": "Adam"
+    "pretrained": True
 }
-print(f"Learning rate: {hyperparams['lr']}")
+print("Learning rate:", model_config["lr"])
+model_config["optimizer"] = "AdamW" # Thêm cặp mới dễ dàng
 
-# 4. Lọc trùng lặp nhãn siêu nhanh với Set
-raw_classes = ["dog", "cat", "dog", "bird", "cat"]
-unique_classes = set(raw_classes)
-print(f"Các lớp nhãn: {unique_classes}") # {'dog', 'cat', 'bird'}
+# ==========================================
+# 4. SET (LỌC TRÙNG LẶP & CÁC PHÉP TOÁN TẬP HỢP)
+# ==========================================
+dataset_labels = ["cat", "dog", "cat", "bird", "dog", "cat"]
+unique_classes = set(dataset_labels)
+print("Các lớp duy nhất:", unique_classes) # {'cat', 'dog', 'bird'}
 
-# 5. Phân biệt Parameter và Argument
-def train_model(epochs, lr=0.01, *args, **kwargs):
-    # epochs, lr là parameters
-    print(f"Train {epochs} epochs với lr={lr}")
+train_set = {"cat", "dog", "bird"}
+test_set = {"dog", "elephant"}
+print("Các con vật chung (Giao &):", train_set & test_set) # {'dog'}
+print("Tất cả các con vật (Hợp |):", train_set | test_set)
 
-train_model(50, 0.005) # 50 và 0.005 là arguments
+# ==========================================
+# 5. PARAMETERS VÀ ARGUMENTS (KÈM *ARGS, **KWARGS)
+# ==========================================
+# x, y là parameters
+def compute_linear(x, w, b=0.0):
+    return w * x + b
+
+# 5, 2.5 là arguments (đối số truyền vào)
+val = compute_linear(5, 2.5)
+
+# Hàm nhận linh hoạt số lượng đối số
+def build_model(name, *layers, **hyperparams):
+    print(f"Mô hình: {name}")
+    print("Các lớp mạng (Tuple):", layers)
+    print("Siêu tham số (Dict):", hyperparams)
+
+build_model("MyCNN", "Conv2d", "BatchNorm", "ReLU", "Linear", lr=0.001, drop=0.2)
           `,
           quiz: [
             {
-              question: "Điều gì sẽ xảy ra khi chạy đoạn code sau: a = (1, 2); a[0] = 5?",
+              question: "Đoạn code sau in ra kết quả gì: a = [10, 20]; b = a; b.append(30); print(len(a))?",
               options: [
-                "a trở thành (5, 2)",
-                "Báo lỗi TypeError vì Tuple là kiểu bất biến (Immutable)",
-                "a trở thành [5, 2]",
-                "Không có chuyện gì xảy ra"
+                "2",
+                "3",
+                "Báo lỗi TypeError",
+                "None"
               ],
               answer: 1,
-              explanation: "Tuple là kiểu dữ liệu bất biến (Immutable), một khi đã tạo thì không thể thay đổi giá trị của bất kỳ phần tử nào bên trong."
+              explanation: "Vì List là kiểu Mutable và 'b = a' chỉ gán con trỏ tham chiếu cùng vùng nhớ, thao tác trên b sẽ làm thay đổi danh sách a. Do đó độ dài len(a) là 3."
             },
             {
-              question: "Cấu trúc dữ liệu nào trong Python có tốc độ tra cứu phần tử trung bình là O(1)?",
+              question: "Trong Python, đối tượng nào sau đây KHÔNG THỂ được sử dụng làm Key trong Dictionary?",
               options: [
-                "List",
-                "Tuple",
-                "Dictionary và Set",
-                "Chuỗi ký tự (str)"
+                "Chuỗi 'learning_rate'",
+                "Số nguyên 42",
+                "Tuple (224, 224)",
+                "List [1, 2, 3]"
               ],
-              answer: 2,
-              explanation: "Dictionary và Set được triển khai bằng Bảng băm (Hash Table) nên tốc độ tìm kiếm/truy xuất theo Key trung bình là O(1)."
+              answer: 3,
+              explanation: "Key của Dictionary bắt buộc phải là đối tượng bất biến và băm được (Hashable). List là Mutable nên không thể dùng làm Key."
             },
             {
-              question: "Trong định nghĩa hàm 'def predict(image, threshold=0.5):', 'image' và 'threshold' được gọi là gì?",
+              question: "Cú pháp đúng để tạo một Tuple chỉ có đúng 1 phần tử số 5 là gì?",
               options: [
-                "Arguments (Đối số)",
+                "t = (5)",
+                "t = (5,)",
+                "t = tuple[5]",
+                "t = {5}"
+              ],
+              answer: 1,
+              explanation: "Trong Python, nếu chỉ viết (5) thì Python xem dấu ngoặc tròn là dấu ngoặc ưu tiên số học (số nguyên 5). Để tạo Tuple 1 phần tử, bắt buộc phải có dấu phẩy: (5,)."
+            },
+            {
+              question: "Trong định nghĩa hàm 'def train(epochs, lr=0.01):', 'epochs' và 'lr' được gọi là gì?",
+              options: [
                 "Parameters (Tham số)",
-                "Variables độc lập",
+                "Arguments (Đối số)",
+                "Local Variables",
                 "Constants"
               ],
-              answer: 1,
-              explanation: "Biến được khai báo ở phần định nghĩa hàm được gọi là Parameters (tham số), còn giá trị thực tế truyền vào khi gọi hàm mới là Arguments (đối số)."
+              answer: 0,
+              explanation: "Các biến nằm ở định nghĩa hàm gọi là Parameters (Tham số). Giá trị thực tế đưa vào lúc gọi hàm mới gọi là Arguments (Đối số)."
             }
           ],
           flashcards: [
-            { front: "Scalar", back: "Đại lượng vô hướng, mang 0 chiều, chứa đúng 1 giá trị đơn lẻ (int, float, bool)." },
-            { front: "Mutable vs Immutable", back: "Mutable: Cho phép thay đổi nội dung (List, Dict, Set). Immutable: Bất biến, không thể sửa sau khi tạo (Tuple, int, float, str)." },
-            { front: "Dictionary Key Rule", back: "Key của Dict bắt buộc phải là đối tượng bất biến (Hashable) như số, chuỗi hoặc tuple. Không được dùng List làm Key." },
-            { front: "Set", back: "Tập hợp các phần tử duy nhất, tự động lọc sạch các giá trị trùng lặp, không có thứ tự chỉ số index." }
+            { front: "Scalar", back: "Đại lượng vô hướng, mang 0 chiều trong không gian, chứa đúng 1 giá trị đơn lẻ (int, float, bool, complex)." },
+            { front: "Variable trong Python", back: "Là tấm tem dán nhãn tên (reference pointer) trỏ đến vùng nhớ Heap của đối tượng, không phải là ô chứa giá trị cứng." },
+            { front: "Mutable vs Immutable", back: "Mutable (sửa được): List, Dict, Set. Immutable (bất biến, cấm sửa): Tuple, int, float, str, bool." },
+            { front: "Dictionary Key Rule", back: "Key trong Dict bắt buộc phải là Hashable (bất biến: str, int, tuple). Tuyệt đối không được dùng List làm Key." },
+            { front: "*args", back: "Gói tất cả các đối số vị trí (positional) dư thừa thành một Tuple." },
+            { front: "**kwargs", back: "Gói tất cả các đối số từ khóa (keyword) dư thừa dạng key=value thành một Dictionary." }
           ],
           tips: `
             <div class="section-block">
-              <h4>Câu hỏi phỏng vấn thường gặp:</h4>
-              <p><strong>Hỏi:</strong> Phân biệt giữa <code>is</code> và <code>==</code> trong Python?</p>
-              <p><strong>Trả lời:</strong> <code>==</code> so sánh <em>giá trị</em> của hai đối tượng, còn <code>is</code> so sánh <em>định danh vùng nhớ (memory address)</em> xem chúng có phải là cùng một đối tượng hay không.</p>
+              <h4>Câu hỏi phỏng vấn AI / Python cốt lõi:</h4>
+              <p><strong>1. Phân biệt sự khác nhau giữa Shallow Copy và Deep Copy?</strong></p>
+              <p><strong>Trả lời:</strong> Shallow Copy (<code>a.copy()</code>) tạo danh sách mới nhưng các phần tử con lồng bên trong (nested objects) vẫn trỏ chung vùng nhớ. Deep Copy (<code>copy.deepcopy(a)</code>) sao chép đệ quy hoàn toàn mọi cấp, tạo ra bản sao độc lập 100%.</p>
             </div>
             <div class="section-block">
-              <p><strong>Hỏi:</strong> Tại sao trong Machine Learning ta dùng NumPy Array thay vì List thông thường của Python?</p>
-              <p><strong>Trả lời:</strong> List của Python lưu con trỏ phân tán trong RAM và kiểm tra kiểu động nên tính toán chậm. NumPy Array lưu các khối nhớ liên tục cùng kiểu dữ liệu (C-style contiguous array), hỗ trợ tính toán vector hóa (Vectorization) và tối ưu hóa bằng tập lệnh phần cứng SIMD/C/Fortran nhanh hơn hàng trăm lần.</p>
+              <p><strong>2. Tại sao lại dùng Tuple thay vì List dù List đa năng hơn?</strong></p>
+              <p><strong>Trả lời:</strong></p>
+              <ul>
+                <li><strong>An toàn dữ liệu:</strong> Đảm bảo cấu hình, kích thước ảnh, hằng số không bị sửa đổi ngoài ý muốn (Write-protection).</li>
+                <li><strong>Hiệu năng:</strong> Tuple chiếm ít bộ nhớ RAM hơn và được cấp phát nhanh hơn List.</li>
+                <li><strong>Khả năng băm (Hashability):</strong> Tuple có thể làm Key cho Dictionary, trong khi List thì không.</li>
+              </ul>
             </div>
           `
         }
