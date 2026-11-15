@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIO 2026 · AI Knowledge Hub</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- KaTeX for crisp Math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Highlight.js for Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+
+  <!-- TOP HEADER -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <span class="brand-logo">⚡</span>
+        <div>
+          <h1 class="brand-title">AIO 2026 <span class="badge">Knowledge Hub</span></h1>
+          <p class="brand-subtitle">Trạm học tập & Tra cứu tương tác AI · Python · ML · DL · CV</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-search-hub" class="btn-nav-search">
+          <span class="icon">🔍</span>
+          <span class="text">Tra cứu nhanh</span>
+          <kbd class="shortcut">Ctrl+K</kbd>
+        </button>
+        <button id="theme-toggle" class="btn-icon" title="Đổi giao diện Sáng/Tối">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- COURSE NAVIGATION TABS -->
+    <nav class="course-nav">
+      <div class="nav-scroll" id="course-tabs-container">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </nav>
+  </header>
+
+  <!-- LESSON SELECTION BAR -->
+  <div class="lesson-bar" id="lesson-bar">
+    <div class="lesson-bar-container" id="lesson-pills-container">
+      <!-- Lesson pills rendered dynamically -->
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+    <div class="content-wrapper" id="standard-view">
+      
+      <!-- HERO BANNER FOR LESSON -->
+      <section class="lesson-hero" id="lesson-hero">
+        <!-- Rendered dynamically -->
+      </section>
+
+      <!-- TWO-COLUMN WORKSPACE -->
+      <div class="workspace-grid">
+        
+        <!-- LEFT SIDEBAR: CATEGORY NAVIGATION -->
+        <aside class="category-sidebar">
+          <div class="sidebar-header">
+            <h3>Danh mục học tập</h3>
+          </div>
+          <nav class="category-menu" id="category-menu">
+            <button class="cat-btn active" data-tab="theory">
+              <span class="cat-icon">📘</span>
+              <span class="cat-name">Lý thuyết cốt lõi</span>
+            </button>
+            <button class="cat-btn" data-tab="math">
+              <span class="cat-icon">📐</span>
+              <span class="cat-name">Toán & Trực giác</span>
+            </button>
+            <button class="cat-btn" data-tab="code">
+              <span class="cat-icon">💻</span>
+              <span class="cat-name">Code Template</span>
+            </button>
+            <button class="cat-btn" data-tab="quiz">
+              <span class="cat-icon">🎯</span>
+              <span class="cat-name">Mini Quiz Ôn tập</span>
+              <span class="quiz-badge" id="quiz-count">0</span>
+            </button>
+            <button class="cat-btn" data-tab="flashcards">
+              <span class="cat-icon">📇</span>
+              <span class="cat-name">Flashcards Thuật ngữ</span>
+            </button>
+            <button class="cat-btn" data-tab="tips">
+              <span class="cat-icon">💡</span>
+              <span class="cat-name">Mẹo & Phỏng vấn</span>
+            </button>
+          </nav>
+        </aside>
+
+        <!-- RIGHT CONTENT DISPLAY -->
+        <article class="content-panel" id="content-panel">
+          <!-- Main Tab Content Rendered Dynamically -->
+        </article>
+
+      </div>
+    </div>
+
+    <!-- SEARCH HUB VIEW (Alternative View) -->
+    <div class="search-hub-view hidden" id="search-hub-view">
+      <div class="search-hub-header">
+        <h2>📚 Trung tâm Tra cứu Toàn diện</h2>
+        <p>Tìm kiếm công thức, hàm, thuật ngữ và mã nguồn trên toàn bộ chương trình AIO 2026</p>
+        <div class="search-input-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search-input" placeholder="Nhập từ khóa (vd: Softmax, List, CNN, MSE, Gradient, Stride...)" autofocus>
+          <button id="clear-search-btn" class="clear-btn">&times;</button>
+        </div>
+        <div class="search-tags" id="search-tags-container">
+          <span class="tag-pill active" data-tag="all">Tất cả</span>
+          <span class="tag-pill" data-tag="python">#Python</span>
+          <span class="tag-pill" data-tag="ml">#MachineLearning</span>
+          <span class="tag-pill" data-tag="cv">#ComputerVision</span>
+          <span class="tag-pill" data-tag="math">#ToánHọc</span>
+        </div>
+      </div>
+
+      <div class="search-results-grid" id="search-results-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <p>AIO 2026 Learning Hub · Bản quyền thuộc về Bạn · Thiết kế phục vụ học tập và tra cứu hiệu năng cao 🚀</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
